@@ -1,5 +1,12 @@
 <?php
 
+
+use App\Models\User;
+use PHPUnit\Framework\ExpectationFailedException;
+use Illuminate\Support\Str;
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -27,8 +34,18 @@ pest()->extend(Tests\TestCase::class)
 |
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
+expect()->extend('toBePhoneNumber', function(){
+    expect($this->value)->toBeString()->toStartWith('+');
+
+    if (strlen($this->value) < 6){
+        throw new ExpectationFailedException('Phone numbers must be at least 6 characters');
+    }
+
+    $number = preg_replace('/[^\d]/', '', substr($this->value, 1));
+    if (!is_numeric($number)) {
+        throw new ExpectationFailedException('Phone numbers must be numeric');
+    }
+
 });
 
 /*
@@ -42,7 +59,7 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function login($user = null)
 {
-    // ..
+    return test()->actingAs($user ?? User::factory()->create());
 }
