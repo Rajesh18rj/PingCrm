@@ -6,9 +6,7 @@ use App\Models\Contact;
 use Faker\Factory as Faker;
 
 
-
-
-it('can store a contact', function() {
+it('can store a contact', function($email) {
 
     $user = User::factory()->create([
         'account_id' => Account::create([
@@ -25,13 +23,13 @@ it('can store a contact', function() {
     $this->post('/contacts', [
         'first_name' =>  $faker->firstName(),
         'last_name' => $faker->lastName(),
-        'email' =>$faker->email(),
+        'email' =>$email,
         'phone' =>$faker->e164PhoneNumber(),
         'address' => '1 Test Street',
         'city' => 'TesterField',
         'region' => 'DerbyShire',
         'country' =>$faker->randomElement(['us', 'ca']),
-        'postal_code' =>$faker->postcode(),
+        'postal_code' =>$faker->postCode(),
     ])
     ->assertRedirect('/contacts')
     ->assertSessionHas('success', 'Contact created.');
@@ -49,6 +47,6 @@ it('can store a contact', function() {
 
 
 
-});
+})->with('valid emails');
 
 
