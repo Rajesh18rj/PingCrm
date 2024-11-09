@@ -1,0 +1,20 @@
+<?php
+
+use Illuminate\Support\Facades\Storage;
+
+it('can show supported image formats and options', function ($path, $options) {
+    Storage::fake()->put($path, file_get_contents(__DIR__ . "/../../fixtures/{$path}"));
+
+    $response = $this->get(route('image', ['path' => $path, ...$options]));
+    $response->assertOk();
+
+    expect($response->streamedContent())->not->toBeEmpty()->toBeString();
+})->with([
+    ['path'=>'example.png',['w'=>40, 'h'=>40, 'fit'=>'crop']],
+    ['path'=>'example.jng',['w'=>40, 'h'=>40, 'fit'=>'crop']],
+    ['path'=>'example.webp',['w'=>40, 'h'=>40, 'fit'=>'crop']],
+    ['path'=>'example.png',['w'=>50, 'h'=>50, 'fit'=>'crop']],
+    ['path'=>'example.jpg',['w'=>50, 'h'=>50, 'fit'=>'crop']],
+    ['path'=>'example.webp',['w'=>50, 'h'=>50, 'fit'=>'crop']],
+
+]);
